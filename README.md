@@ -51,4 +51,7 @@ npm install express
 
 # 3) Instalar nodemon
 npm install --save-dev nodemon
+
+# 3) Iniciar nodemon
+nodemon index.js
 ```
