@@ -33,17 +33,16 @@ function eliminarProducto(id) {
 // Funcion agregar producto
 document.getElementById('formAgregarProducto').addEventListener('submit', (evento) => {
     evento.preventDefault()
-
-    const formData = new FormData(evento.target)
     
+    const formData = new FormData(evento.target)
     const producto = {
         title: formData.get('title'),
         description: formData.get('description'),
         code: formData.get('code'),
         price: parseFloat(formData.get('price')),
-        status: formData.get('status') === 'on',
         stock: parseInt(formData.get('stock')),
         category: formData.get('category'),
+        status: true,
         thumbnails: []
     }
     socket.emit('agregarProducto', producto)
