@@ -35,6 +35,11 @@ router.post('/', async (req, res) => {
     try {
         const { title, description, code, price, status, stock, category, thumbnails } = req.body
         const nuevoProducto = await PM.agregarProducto(title, description, code, price, status, stock, category, thumbnails)
+
+        const socketServer = req.app.get('socketServer') // Obtener io desde app
+        const productos = await PM.consultaProductos()
+        socketServer.emit('productos', productos) // Emite evento de actualización
+
         res.status(201).json({ mensaje: "Producto creado", producto: nuevoProducto })
     } catch (error) {
         res.status(500).json({ error: error.message })
@@ -50,6 +55,11 @@ router.put('/:pid', async (req, res) => {
         if (!resultado) {
             return res.status(404).json({ mensaje: "Error al actualizar el producto" })
         }
+
+        const socketServer = req.app.get('socketServer') // Obtener io desde app
+        const productos = await PM.consultaProductos()
+        socketServer.emit('productos', productos) // Emite evento de actualización
+        
         res.status(200).json({ mensaje: "Producto actualizado", producto: resultado })
     } catch (error) {
         res.status(500).json({ error: error.message })

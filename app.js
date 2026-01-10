@@ -37,6 +37,7 @@ const httpServer = app.listen(port, () => {
 // Configurar Socket.io
 const socketServer = new Server(httpServer)
 const PM = new ProductManager()
+app.set('socketServer', socketServer) //Permite conectar http con socket.io
 
 // Manejo de conexiones
 socketServer.on('connection', async (socket) => {

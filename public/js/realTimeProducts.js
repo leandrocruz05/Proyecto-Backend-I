@@ -34,14 +34,16 @@ function eliminarProducto(id) {
 document.getElementById('formAgregarProducto').addEventListener('submit', (evento) => {
     evento.preventDefault()
 
+    const formData = new FormData(evento.target)
+    
     const producto = {
-        title: evento.target.title.value,
-        description: evento.target.description.value,
-        code: evento.target.code.value,
-        price: parseFloat(evento.target.price.value),
-        status: evento.target.status.checked,
-        stock: parseInt(evento.target.stock.value),
-        category: evento.target.category.value,
+        title: formData.get('title'),
+        description: formData.get('description'),
+        code: formData.get('code'),
+        price: parseFloat(formData.get('price')),
+        status: formData.get('status') === 'on',
+        stock: parseInt(formData.get('stock')),
+        category: formData.get('category'),
         thumbnails: []
     }
     socket.emit('agregarProducto', producto)
