@@ -37,7 +37,7 @@ const httpServer = app.listen(port, () => {
 
 // Configurar Socket.io
 const socketServer = new Server(httpServer)
-const PM = new ProductManager()
+const PM = new productsManager()
 
 // Manejo de conexiones
 socketServer.on('connection', async (socket) => {
