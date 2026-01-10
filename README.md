@@ -1,5 +1,38 @@
 # Proyecto-Backend-I
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Parcial 2.
+
+
+
+---
 ## Parcial 1.
 ```
 Desarrollar un servidor que contenga los endpoints y servicios necesarios para gestionar los productos y carritos de compra para tu API.
