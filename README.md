@@ -1,35 +1,45 @@
-# Proyecto-Backend-I
+# Proyecto Backend I - E-commerce API
 
+## 📋 Descripción
+> Proyecto integral de backend desarrollado en Node.js y Express que implementa un sistema completo de gestión de productos y carritos de compra, con vistas dinámicas en tiempo real utilizando Handlebars y WebSockets.
 
+---
 
+## Parcial 2 - Handlebars & WebSockets
+```
+Integrar al servidor basado en express un motor de plantillas Handlebars y un servidor de socket.io para implementar vistas dinámicas que se actualicen en tiempo real. 
+```
+### Requerimientos Implementados
 
+#### 1.  Configuración del Servidor
+- ✅ Integración del motor de plantillas **Handlebars**
+- ✅ Instalación y configuración de servidor **Socket.io**
+- ✅ Configuración de archivos estáticos con Express
 
+#### 2. Vista `home.handlebars`
+- ✅ Endpoint:  `/` (raíz del sitio)
+- ✅ Muestra lista completa de productos agregados
+- ✅ Renderizado con datos desde el servidor
+- ✅ Enlace para acceder a vista en tiempo real
 
+#### 3. Vista `realTimeProducts.handlebars`
+- ✅ Endpoint: `/realtimeproducts`
+- ✅ Formulario para **agregar productos** mediante WebSockets
+- ✅ Lista dinámica de productos con **actualización en tiempo real**
+- ✅ Botones para **eliminar productos** individualmente
+- ✅ Sincronización automática entre todos los clientes conectados
 
+### 🔧 Aspectos Técnicos Destacados
 
+#### Integración HTTP con WebSockets
+```javascript
+// app.js - Permite usar Socket.io desde rutas HTTP
+app.set('socketServer', socketServer)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Parcial 2.
-
+// Ejemplo en routes/products.routes.js
+const socketServer = req.app.get('socketServer')
+socketServer.emit('productos', productos)
+```
 
 
 ---
@@ -38,53 +48,105 @@
 Desarrollar un servidor que contenga los endpoints y servicios necesarios para gestionar los productos y carritos de compra para tu API.
 ```
 ### Desarrollo de servidor
-- El servidor debe estar basado en Node.js y Express, y escuchar en el puerto 8080. 
-- Se deben disponer dos grupos de rutas: */products y /carts*
-- Estos endpoints estarán implementados con el router de Express, con las siguientes especificaciones:
+- ✅ Servidor basado en **Node.js** y **Express**
+- ✅ Puerto:  **8080**
+- ✅ Arquitectura RESTful con routers separados */products y /carts*
+- ✅ Persistencia en archivos JSON
 
-### Rutas para Manejo de Productos (/api/products/)
-> **GET /:** Debe listar todos los productos de la base de datos.
+## 🛣️ Endpoints API
+### 📦 Productos (`/api/products`)
 
-> **GET /:pid:** Debe traer solo el producto con el id proporcionado.
+| Método | Endpoint | Descripción | Body |
+|--------|----------|-------------|------|
+| `GET` | `/api/products` | Lista todos los productos | - |
+| `GET` | `/api/products/:pid` | Obtiene producto por ID | - |
+| `POST` | `/api/products` | Crea nuevo producto | Ver estructura ⬇️ |
+| `PUT` | `/api/products/:pid` | Actualiza producto | Campos a modificar |
+| `DELETE` | `/api/products/:pid` | Elimina producto | - |
 
-> **POST /:** Debe agregar un nuevo producto con los siguientes campos:
-- **id:** Number/String (No se manda desde el body, se autogenera para asegurar que nunca se repitan los ids).
-- **title:** String
-- **description:** String
-- **code:** String
-- **price:** Number
-- **status:** Boolean
-- **stock:** Number
-- **category:** String
-- **thumbnails:** Array de Strings (rutas donde están almacenadas las imágenes del producto).
-
-> **PUT /:pid:** Debe actualizar un producto por los campos enviados desde el body. No se debe actualizar ni eliminar el id al momento de hacer la actualización.
-
-> **DELETE /:pid:** Debe eliminar el producto con el pid indicado.
-
-### Rutas para Manejo de Carritos (/api/carts/)
-> **POST /:** Debe crear un nuevo carrito con la siguiente estructura:
-- **id:** Number/String (Autogenerado para asegurar que nunca se dupliquen los ids).
-- **products:** Array que contendrá objetos que representen cada producto.
-
-> **GET /:cid:** Debe listar los productos que pertenecen al carrito con el cid proporcionado.
- 
-> **POST /:cid/product/:pid:** Debe agregar el producto al arreglo products del carrito seleccionado, utilizando el siguiente formato:
-- product: Solo debe contener el ID del producto.
-- quantity: Debe contener el número de ejemplares de dicho producto (se agregará de uno en uno). 
-- Si un producto ya existente intenta agregarse, se debe incrementar el campo quantity de dicho producto.
-
-#### Comandos realizados
-```bash
-# 1) Inicializar package.json
-npm init -y
-
-# 2) Instalar Express
-npm install express
-
-# 3) Instalar nodemon
-npm install --save-dev nodemon
-
-# 3) Iniciar nodemon
-nodemon index.js
+#### Estructura de Producto
+```json
+{
+  "id": 1,                    // Autogenerado
+  "title": "Camiseta Titular",
+  "description": "Camiseta oficial.. .",
+  "code": "PRD001",
+  "price": 70000,
+  "status": true,
+  "stock": 10,
+  "category": "Camisetas",
+  "thumbnails": ["/img/camiseta. jpg"]
+}
 ```
+### 🛒 Carritos (`/api/carts`)
+
+| Método | Endpoint | Descripción | Body |
+|--------|----------|-------------|------|
+| `POST` | `/api/carts` | Crea nuevo carrito | - |
+| `GET` | `/api/carts/: cid` | Lista productos del carrito | - |
+| `POST` | `/api/carts/:cid/product/: pid` | Agrega producto al carrito | `{ "quantity": 2 }` |
+
+#### Estructura de Carrito
+```json
+{
+  "id": 1,                    // Autogenerado
+  "products": [
+    {
+      "product":  5,           // ID del producto
+      "quantity": 3           // Se incrementa si ya existe
+    }
+  ]
+}
+```
+
+## 🖥️ Rutas de Vistas
+
+| Ruta | Vista | Descripción |
+|------|-------|-------------|
+| `/` | `home.handlebars` | Lista estática de productos |
+| `/realtimeproducts` | `realTimeProducts.handlebars` | Gestión en tiempo real con WebSockets |
+
+## 🚀 Instalación y Uso
+
+### Prerrequisitos
+- Node.js v14 o superior
+- npm
+
+### Pasos de Instalación
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/leandrocruz05/Proyecto-Backend-I.git
+cd Proyecto-Backend-I
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Iniciar servidor en modo desarrollo
+npm run dev
+
+# O iniciar en modo producción
+npm start
+```
+
+### Acceso a la Aplicación
+- **Servidor:** http://localhost:8080
+- **Vista Home:** http://localhost:8080/
+- **Vista Tiempo Real:** http://localhost:8080/realtimeproducts
+- **API Productos:** http://localhost:8080/api/products
+- **API Carritos:** http://localhost:8080/api/carts
+
+## 📄 Licencia
+
+ISC
+
+---
+
+## 👤 Autor
+
+**Leandro Cruz**  
+GitHub: [@leandrocruz05](https://github.com/leandrocruz05)
+
+---
+
+**Última actualización:** Enero 2026
