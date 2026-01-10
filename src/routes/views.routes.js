@@ -1,7 +1,7 @@
 const express = require('express')
 const viewsRouter = express.Router()
-const productManager = require('../managers/product.manager')
-const PM = new productManager()
+const ProductManager = require('../managers/ProductManager')
+const PM = new ProductManager()
 
 // Ruta para home.hbs
 viewsRouter.get('/', async (req, res) => {
@@ -23,4 +23,4 @@ viewsRouter.get('/realtimeproducts', async (req, res) => {
     }
 })
 
-export default viewsRouter
+module.exports = viewsRouter
