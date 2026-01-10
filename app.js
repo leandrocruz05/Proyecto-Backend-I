@@ -4,8 +4,7 @@ const { server, Server } = require('socket.io')
 const productsRouter = require('./src/routes/products.routes.js')
 const cartsRouter = require('./src/routes/carts.routes.js')
 const viewRouter = require('./src/routes/views.routes.js')
-const __dirname = require('./src/utils.js')
-const productsManager = require('./src/managers/products.manager.js')
+const ProductManager = require('./src/managers/ProductManager.js')
 
 const port = 8080
 const app = express()
@@ -13,7 +12,7 @@ const app = express()
 // Configuracion de Handlebars
 app.engine('handlebars', handlebars.engine())
 app.set('view engine', 'handlebars')
-app.set('views', __dirname + '/views')
+app.set('views', __dirname + '/src/views')
 
 // Configuración de Middlewares
 app.use(express.json())
@@ -37,7 +36,7 @@ const httpServer = app.listen(port, () => {
 
 // Configurar Socket.io
 const socketServer = new Server(httpServer)
-const PM = new productsManager()
+const PM = new ProductManager()
 
 // Manejo de conexiones
 socketServer.on('connection', async (socket) => {

@@ -2,11 +2,14 @@
   "name": "proyecto-backend-i",
   "version": "1.0.0",
   "description": "```\r Desarrollar un servidor que contenga los endpoints y servicios necesarios para gestionar los productos y carritos de compra para tu API.\r ```\r ### Desarrollo de servidor\r - El servidor debe estar basado en Node.js y Express, y escuchar en el puerto 8080. \r - Se deben disponer dos grupos de rutas: */products y /carts*\r - Estos endpoints estarán implementados con el router de Express, con las siguientes especificaciones:",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "14.x"
   },
   "repository": {
     "type": "git",
