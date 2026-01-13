@@ -11,11 +11,12 @@ socket.on('productos', (productos) => {
                         <td>${producto.id}</td>
                         <td>${producto.title}</td>
                         <td>${producto.description}</td>
-                        <td>${producto.price}</td>
-                        <td>${producto.stock}</td>
-                        <td>${producto.category}</td>
-                        <td><button onclick="eliminarProducto(${producto.id})">Eliminar</button></td>
-                    </tr>`
+                        <td class="text-nowrap">$${producto.price}</td>
+                        <td><span class="badge bg-info">${producto.stock}</span></td>
+                        <td><span class="badge bg-secondary">${producto.category}</span></td>
+                        <td><button class="btn btn-danger btn-sm" onclick="eliminarProducto(${producto.id})">Eliminar</button></td>
+                    </tr>
+                    `
         productoForm.innerHTML += tr
     })
 })
@@ -35,7 +36,7 @@ document.getElementById('formAgregarProducto').addEventListener('submit', (event
     evento.preventDefault()
 
     const formData = new FormData(evento.target)
-    
+
     const producto = {
         title: formData.get('title'),
         description: formData.get('description'),
