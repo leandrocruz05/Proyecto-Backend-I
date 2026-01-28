@@ -1,18 +1,41 @@
-const express = require('express')
-const ProductManager = require('../managers/ProductManager')
+import express from 'express'
+import ProductManager from '../managers/ProductManager.js'
+
 const router = express.Router()
 const PM = new ProductManager()
 
-// Lista todos los productos
+// Lista todos los productos con paginacion, filtros y ordenamiento
 router.get('/', async (req, res) => {
     try {
-        const productos = await PM.consultaProductos()
-        if (!productos || productos.length === 0) {
-            return res.status(404).json({ mensaje: "No hay productos disponibles" })
+        const { limit, page, sort, query } = req.query
+
+        const productos = await PM.consultaProductos({
+            limit,
+            page,
+            sort,
+            query
+        })
+
+        if (resultado.status === 'error') {
+            return res.status(400).json({ resultado })
         }
-        res.json(productos)
+
+        res.render('productos', {
+            productos: {
+                docs: productos.docs,
+                totalDocs: productos.totalDocs,
+                limit: productos.limit,
+                totalPages: productos.totalPages,
+                page: productos.page,
+                currentPage: productos.page,
+                nextPage: productos.hasNextPage ? productos.nextPage : null,
+                prevPage: productos.hasPrevPage ? productos.prevPage : null,
+                hasPrevPage: productos.hasPrevPage,
+                hasNextPage: productos.hasNextPage
+            }
+        })
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        res.status(400).json({ error: error.message })
     }
 })
 
@@ -21,12 +44,14 @@ router.get('/:pid', async (req, res) => {
     try {
         const { pid } = req.params
         const producto = await PM.consultaProductosxId(pid)
+
         if (!producto) {
             return res.status(404).json({ mensaje: "Producto no encontrado" })
         }
-        res.json(producto)
+
+        res.render('producto', { producto })
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        res.status(400).json({ error: error.message })
     }
 })
 
@@ -37,12 +62,12 @@ router.post('/', async (req, res) => {
         const nuevoProducto = await PM.agregarProducto(title, description, code, price, status, stock, category, thumbnails)
 
         const socketServer = req.app.get('socketServer') // Obtener io desde app
-        const productos = await PM.consultaProductos()
-        socketServer.emit('productos', productos) // Emite evento de actualización
+        const productos = await PM.consultaProductos({ limit: 100 }); // Obtener todos para socket
+        socketServer.emit('productos', productos.payload)
 
         res.status(201).json({ mensaje: "Producto creado", producto: nuevoProducto })
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        res.status(400).json({ error: error.message })
     }
 })
 
@@ -50,19 +75,20 @@ router.post('/', async (req, res) => {
 router.put('/:pid', async (req, res) => {
     try {
         const { pid } = req.params
-        const { title, description, code, price, status, stock, category, thumbnails } = req.body
-        const resultado = await PM.actualizarProducto(pid, title, description, code, price, status, stock, category, thumbnails)
+        const updateData = req.body
+        const resultado = await PM.actualizarProducto(pid, updateData)
+
         if (!resultado) {
             return res.status(404).json({ mensaje: "Error al actualizar el producto" })
         }
 
         const socketServer = req.app.get('socketServer') // Obtener io desde app
-        const productos = await PM.consultaProductos()
-        socketServer.emit('productos', productos) // Emite evento de actualización
-        
+        const productos = await PM.consultaProductos({ limit: 100 })
+        socketServer.emit('productos', productos.payload)
+
         res.status(200).json({ mensaje: "Producto actualizado", producto: resultado })
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        res.status(400).json({ error: error.message })
     }
 })
 
@@ -71,13 +97,15 @@ router.delete('/:pid', async (req, res) => {
     try {
         const { pid } = req.params
         const resultado = await PM.eliminarProducto(pid)
+
         if (!resultado) {
             return res.status(404).json({ mensaje: "Error al eliminar el producto" })
         }
+
         res.status(200).json({ mensaje: "Producto eliminado" })
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        res.status(400).json({ error: error.message })
     }
 })
 
-module.exports = router
+export default router

@@ -18,7 +18,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/leandrocruz05/Proyecto-Backend-I/issues"
   },
@@ -26,6 +26,8 @@
   "dependencies": {
     "express": "^5.2.1",
     "express-handlebars": "^8.0.3",
+    "mongoose": "^9.1.5",
+    "mongoose-paginate-v2": "^1.9.1",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {

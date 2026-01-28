@@ -1,10 +1,14 @@
-const express = require('express')
-const handlebars = require('express-handlebars')
-const { server, Server } = require('socket.io')
-const productsRouter = require('./src/routes/products.routes.js')
-const cartsRouter = require('./src/routes/carts.routes.js')
-const viewRouter = require('./src/routes/views.routes.js')
-const ProductManager = require('./src/managers/ProductManager.js')
+import express from 'express'
+import handlebars from 'express-handlebars'
+import { Server } from 'socket.io'
+import productsRouter from './src/routes/products.routes.js'
+import cartsRouter from './src/routes/carts.routes.js'
+import viewRouter from './src/routes/views.routes.js'
+import ProductManager from './src/managers/ProductManager.js'
+import connectDB from './src/config/database.js'
+
+// Conectar a la base de datos
+connectDB()
 
 const port = 8080
 const app = express()
@@ -42,12 +46,12 @@ app.set('socketServer', socketServer) //Permite conectar http con socket.io
 // Manejo de conexiones
 socketServer.on('connection', async (socket) => {
     socket.on('usuarioConectado', data => {
-       socket.broadcast.emit('usuarioConectado', data + ' se ha conectado')
+        socket.broadcast.emit('usuarioConectado', data + ' se ha conectado')
     })
 
     // Enviar productos 
-    const productos = await PM.consultaProductos()
-    socket.emit('productos', productos)
+    const productos = await PM.consultaProductos({ limit: 100 })
+    socket.emit('productos', productos.docs)
 
     // Escuchar agregar producto
     socket.on('agregarProducto', async (producto) => {
@@ -61,14 +65,14 @@ socketServer.on('connection', async (socket) => {
             producto.category,
             producto.thumbnails
         )
-        const productos = await PM.consultaProductos()
-        socketServer.emit('productos', productos)
+        const productos = await PM.consultaProductos({ limit: 100 })
+        socketServer.emit('productos', productos.docs)
     })
 
     // Escuchar eliminar producto
     socket.on('eliminarProducto', async (id) => {
         await PM.eliminarProducto(id)
-        const productos = await PM.consultaProductos()
+        const productos = await PM.consultaProductos({ limit: 100 })
         socketServer.emit('productos', productos)
     })
 })
