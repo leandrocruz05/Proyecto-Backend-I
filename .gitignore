@@ -4,3 +4,7 @@ git init
 git add .
 git commit -m ""
 git push -u origin main
+
+package.json
+"type": "commonjs", // Usa CommonJS (const x = require('x')) 
+"type": "module", // Usa ES Modules (import x from 'x')
