@@ -10,45 +10,63 @@ class ProductManager {
         // this.PRODUCTOS_FILE = path.join(__dirname, '../data/products.json')
     }
 
-    async consultaProductos() {
+    async consultaProductos(queryParams = {}) {
         try {
             // const contenido = await fs.readFile(this.PRODUCTOS_FILE, 'utf-8')
             // return JSON.parse(contenido || '[]')
 
             //! Armo consulta a MongoDB usando el modelo con paginacion, filtros y ordenamiento
             const {
-                limit = 10, //? Cantidad de productos por página
-                page = 1, //? Página actual
-                sort, //? Ordenamiento por precio (asc o desc)
+                limit = 10,
+                page = 1,
+                sort,
                 query
             } = queryParams
-
-            //! Pipeline de agregacion
-            let pipeline = []
 
             //! Filtros
             let filtro = {}
             if (query) {
-                filtro = query
+                if (typeof query === 'string') {
+                    try {
+                        filtro = JSON.parse(query)
+                    } catch (error) {
+                        filter = { category: query }
+                    }
+                } else {
+                    filtro = query
+                }
             }
-            pipeline.push({ $match: filtro })
 
             //! Ordenamiento por precio
-            if (sort === 'asc' || sort === 'desc') {
-                pipeline.push({
-                    $sort: { price: sort === 'asc' ? 1 : -1 }
-                })
+            let orden = {}
+            if (sort) {
+                orden.price = sort === 'asc' ? 1 : -1
             }
 
-            //! Paginación
-            const skip = (page - 1) * limit // Documentos a saltar
-            pipeline.push({ $skip: skip }) // Salto de documentos
-            pipeline.push({ $limit: limit }) // Cantidad de productos por página
+            //! Paginación usando plugin
+            const pagina = {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                sort: orden
+            }
 
-            const productos = await ProductModel.aggregate(pipeline)
+            const productos = await ProductModel.paginate(filtro, pagina)
 
-            console.log(productos)
-            return productos
+            // Devuelvo estructura completa
+            return {
+                status: "success",
+                payload: productos.docs,
+                totalPages: productos.totalPages,
+                prevPage: productos.prevPage,
+                nextPage: productos.nextPage,
+                page: productos.page,
+                hasPrevPage: productos.hasPrevPage,
+                hasNextPage: productos.hasNextPage,
+                prevLink: productos.hasPrevPage ? `/api/products?limit=${limit}&page=${productos.prevPage}` : null,
+                nextLink: productos.hasNextPage ? `/api/products?limit=${limit}&page=${productos.nextPage}` : null
+            }
+
+
 
         } catch (error) {
             console.error("Error al leer el archivo de productos:", error)

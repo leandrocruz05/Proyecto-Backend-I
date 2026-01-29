@@ -16,24 +16,12 @@ router.get('/', async (req, res) => {
             query
         })
 
-        if (resultado.status === 'error') {
-            return res.status(400).json({ resultado })
+        if (productos.status === 'error') {
+            return res.status(400).json({ productos })
         }
 
-        res.render('productos', {
-            productos: {
-                docs: productos.docs,
-                totalDocs: productos.totalDocs,
-                limit: productos.limit,
-                totalPages: productos.totalPages,
-                page: productos.page,
-                currentPage: productos.page,
-                nextPage: productos.hasNextPage ? productos.nextPage : null,
-                prevPage: productos.hasPrevPage ? productos.prevPage : null,
-                hasPrevPage: productos.hasPrevPage,
-                hasNextPage: productos.hasNextPage
-            }
-        })
+        res.json({ productos })
+
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
