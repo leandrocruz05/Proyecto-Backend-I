@@ -47,10 +47,19 @@ class ProductManager {
             const pagina = {
                 page: parseInt(page),
                 limit: parseInt(limit),
-                sort: orden
+                sort: orden,
+                lean: true  // Devuelve objetos planos de JavaScript
             }
 
             const productos = await ProductModel.paginate(filtro, pagina)
+
+            // Armo links de paginación
+            const baseLink = (PageNum) => {
+                let link = `/api/products?limit=${limit}&page=${PageNum}` // Link base con limit y page
+                if (sort) { link += `&sort=${sort}` } // Agrego sort (orden) si existe
+                if (query) { link += `&query=${encodeURIComponent(typeof query === 'string' ? query : JSON.stringify(query))}` } // Agrego query (filtro) si existe
+                return link
+            }
 
             // Devuelvo estructura completa
             return {
@@ -62,12 +71,8 @@ class ProductManager {
                 page: productos.page,
                 hasPrevPage: productos.hasPrevPage,
                 hasNextPage: productos.hasNextPage,
-                prevLink: productos.hasPrevPage
-                    ? `/api/products?limit=${limit}&page=${productos.prevPage}${sort ? `&sort=${sort}` : ''}${query ? `&query=${encodeURIComponent(typeof query === 'string' ? query : JSON.stringify(query))}` : ''}`
-                    : null,
-                nextLink: productos.hasNextPage
-                    ? `/api/products?limit=${limit}&page=${productos.nextPage}${sort ? `&sort=${sort}` : ''}${query ? `&query=${encodeURIComponent(typeof query === 'string' ? query : JSON.stringify(query))}` : ''}`
-                    : null
+                prevLink: productos.hasPrevPage ? baseLink(productos.prevPage) : null,
+                nextLink: productos.hasNextPage ? baseLink(productos.nextPage) : null
             }
         } catch (error) {
             console.error("Error al consultar productos:", error)
