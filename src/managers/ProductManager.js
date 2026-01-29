@@ -30,7 +30,7 @@ class ProductManager {
                     try {
                         filtro = JSON.parse(query)
                     } catch (error) {
-                        filter = { category: query }
+                        filtro = { category: query }
                     }
                 } else {
                     filtro = query
@@ -62,15 +62,19 @@ class ProductManager {
                 page: productos.page,
                 hasPrevPage: productos.hasPrevPage,
                 hasNextPage: productos.hasNextPage,
-                prevLink: productos.hasPrevPage ? `/api/products?limit=${limit}&page=${productos.prevPage}` : null,
-                nextLink: productos.hasNextPage ? `/api/products?limit=${limit}&page=${productos.nextPage}` : null
+                prevLink: productos.hasPrevPage
+                    ? `/api/products?limit=${limit}&page=${productos.prevPage}${sort ? `&sort=${sort}` : ''}${query ? `&query=${encodeURIComponent(typeof query === 'string' ? query : JSON.stringify(query))}` : ''}`
+                    : null,
+                nextLink: productos.hasNextPage
+                    ? `/api/products?limit=${limit}&page=${productos.nextPage}${sort ? `&sort=${sort}` : ''}${query ? `&query=${encodeURIComponent(typeof query === 'string' ? query : JSON.stringify(query))}` : ''}`
+                    : null
             }
-
-
-
         } catch (error) {
-            console.error("Error al leer el archivo de productos:", error)
-            return []
+            console.error("Error al consultar productos:", error)
+            return {
+                status: 'error',
+                error: error.message
+            }
         }
     }
 
@@ -83,7 +87,10 @@ class ProductManager {
             return producto
         } catch (error) {
             console.error("Error al consultar el producto por ID:", error)
-            return null
+            return {
+                status: 'error',
+                error: error.message
+            }
         }
     }
 
@@ -110,7 +117,10 @@ class ProductManager {
             return nuevoProducto
         } catch (error) {
             console.error("Error al agregar el producto:", error)
-            return null
+            return {
+                status: 'error',
+                error: error.message
+            }
         }
     }
 
@@ -121,7 +131,10 @@ class ProductManager {
             return nuevosProductos
         } catch (error) {
             console.error("Error al agregar productos:", error)
-            return null
+            return {
+                status: 'error',
+                error: error.message
+            }
         }
     }
 
@@ -151,7 +164,10 @@ class ProductManager {
 
             if (!producto) {
                 console.log("Producto no encontrado")
-                return null
+                return {
+                    status: 'error',
+                    error: 'Producto no encontrado'
+                }
             }
 
             //! Actualizar el producto
@@ -160,7 +176,10 @@ class ProductManager {
             return producto
         } catch (error) {
             console.error("Error al actualizar el producto:", error)
-            return null
+            return {
+                status: 'error',
+                error: error.message
+            }
         }
     }
 
@@ -177,7 +196,10 @@ class ProductManager {
 
             if (!producto) {
                 console.log("Producto no encontrado")
-                return null
+                return {
+                    status: 'error',
+                    error: 'Producto no encontrado'
+                }
             }
 
             //! Eliminar el producto
@@ -187,7 +209,10 @@ class ProductManager {
             return true
         } catch (error) {
             console.error("Error al eliminar el producto:", error)
-            return false
+            return {
+                status: 'error',
+                error: error.message
+            }
         }
     }
 }

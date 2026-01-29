@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
             return res.status(400).json({ productos })
         }
 
-        res.json({ productos })
+        res.json(productos)
 
     } catch (error) {
         res.status(400).json({ error: error.message })
