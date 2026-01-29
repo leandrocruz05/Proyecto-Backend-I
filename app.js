@@ -1,5 +1,7 @@
 import express from 'express'
 import handlebars from 'express-handlebars'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
 import { Server } from 'socket.io'
 import productsRouter from './src/routes/products.routes.js'
 import cartsRouter from './src/routes/carts.routes.js'
@@ -7,11 +9,13 @@ import viewRouter from './src/routes/views.routes.js'
 import ProductManager from './src/managers/ProductManager.js'
 import connectDB from './src/config/database.js'
 
-// Conectar a la base de datos
+// Conecto a la base de datos
 connectDB()
 
 const port = 8080
 const app = express()
+const __filename = fileURLToPath(import.meta.url) // Obtengo el path del archivo actual
+const __dirname = dirname(__filename) // Obtengo el directorio actual
 
 // Configuracion de Handlebars
 app.engine('handlebars', handlebars.engine())
