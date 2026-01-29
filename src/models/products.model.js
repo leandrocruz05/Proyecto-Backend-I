@@ -41,6 +41,6 @@ const productSchema = new mongoose.Schema({
 
 productSchema.plugin(mongoosePaginate) // Agrego plugin de paginacion
 
-const ProductModel = mongoose.model('Productos', productSchema)
+const ProductModel = mongoose.model('productos', productSchema)
 
 export default ProductModel
