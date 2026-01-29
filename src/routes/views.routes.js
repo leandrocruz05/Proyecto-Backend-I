@@ -4,7 +4,7 @@ import ProductManager from '../managers/ProductManager.js'
 const viewsRouter = express.Router()
 const PM = new ProductManager()
 
-// Ruta para home.hbs
+//! GET / - Ruta para home.hbs
 viewsRouter.get('/', async (req, res) => {
     try {
         const productos = await PM.consultaProductos()
@@ -14,7 +14,7 @@ viewsRouter.get('/', async (req, res) => {
     }
 })
 
-// Ruta para realTimeProducts.hbs
+//! GET /realtimeproducts - Ruta para realTimeProducts.hbs
 viewsRouter.get('/realtimeproducts', async (req, res) => {
     try {
         const productos = await PM.consultaProductos()

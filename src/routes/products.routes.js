@@ -4,7 +4,7 @@ import ProductManager from '../managers/ProductManager.js'
 const router = express.Router()
 const PM = new ProductManager()
 
-// Lista todos los productos con paginacion, filtros y ordenamiento
+//! GET / - Lista todos los productos con paginacion, filtros y ordenamiento
 router.get('/', async (req, res) => {
     try {
         const { limit, page, sort, query } = req.query
@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
     }
 })
 
-// Lista producto por ID
+//! GET /:pid - Lista producto por ID
 router.get('/:pid', async (req, res) => {
     try {
         const { pid } = req.params
@@ -43,14 +43,14 @@ router.get('/:pid', async (req, res) => {
     }
 })
 
-// Crea un nuevo producto
+//! POST / - Crea un nuevo producto
 router.post('/', async (req, res) => {
     try {
         const { title, description, code, price, status, stock, category, thumbnails } = req.body
         const nuevoProducto = await PM.agregarProducto(title, description, code, price, status, stock, category, thumbnails)
 
-        const socketServer = req.app.get('socketServer') // Obtener io desde app
-        const productos = await PM.consultaProductos({ limit: 100 }); // Obtener todos para socket
+        const socketServer = req.app.get('socketServer') //? Obtener io desde app
+        const productos = await PM.consultaProductos({ limit: 100 }); //? Obtener todos para socket
         socketServer.emit('productos', productos.payload)
 
         res.status(201).json({ mensaje: "Producto creado", producto: nuevoProducto })
@@ -59,7 +59,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-// Actualiza un producto por ID
+//! PUT /:pid - Actualiza un producto por ID
 router.put('/:pid', async (req, res) => {
     try {
         const { pid } = req.params
@@ -70,7 +70,7 @@ router.put('/:pid', async (req, res) => {
             return res.status(404).json({ mensaje: "Error al actualizar el producto" })
         }
 
-        const socketServer = req.app.get('socketServer') // Obtener io desde app
+        const socketServer = req.app.get('socketServer') //? Obtener io desde app
         const productos = await PM.consultaProductos({ limit: 100 })
         socketServer.emit('productos', productos.payload)
 
@@ -80,7 +80,7 @@ router.put('/:pid', async (req, res) => {
     }
 })
 
-// Elimina un producto por ID
+//! DELETE /:pid - Elimina un producto por ID
 router.delete('/:pid', async (req, res) => {
     try {
         const { pid } = req.params
