@@ -18,7 +18,31 @@ const __filename = fileURLToPath(import.meta.url) // Obtengo el path del archivo
 const __dirname = dirname(__filename) // Obtengo el directorio actual
 
 // Configuracion de Handlebars
-app.engine('handlebars', handlebars.engine())
+app.engine('handlebars', handlebars.engine({
+    helpers: {
+        // Comparar dos valores
+        eq: (a, b) => a === b,
+
+        // Mayor que
+        gt: (a, b) => a > b,
+
+        // Multiplicar dos números
+        multiply: (a, b) => a * b,
+
+        // Calcular el total del carrito
+        calculateTotal: (products) => {
+            if (!products || products.length === 0) return 0;
+
+            return products.reduce((total, item) => {
+                if (item.product && item.product.price && item.quantity) {
+                    return total + (item.product.price * item.quantity);
+                }
+                return total;
+            }, 0).toFixed(2);
+        }
+    }
+}))
+
 app.set('view engine', 'handlebars')
 app.set('views', __dirname + '/src/views')
 

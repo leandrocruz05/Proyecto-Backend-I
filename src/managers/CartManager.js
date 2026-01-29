@@ -192,7 +192,7 @@ class CartManager {
         }
     }
 
-    async actualizarCantProductos(cid, pid, quantity) {
+    async actualizarCantidadProducto(cid, pid, quantity) {
         try {
             const carrito = await CartModel.findById(cid)
 
