@@ -1,19 +1,18 @@
-// const fs = require('fs').promises //? Migro a MongoDB
-// const path = require('path') //? Migro a MongoDB
+//* const fs = require('fs').promises //? Migro a MongoDB
+//* const path = require('path') //? Migro a MongoDB
 import ProductModel from '../models/products.model.js'
 
 
 class ProductManager {
     constructor() {
-        //? Migro a MongoDB
-        // this.productos = []
-        // this.PRODUCTOS_FILE = path.join(__dirname, '../data/products.json')
+        //* this.productos = []
+        //* this.PRODUCTOS_FILE = path.join(__dirname, '../data/products.json')
     }
 
     async consultaProductos(queryParams = {}) {
         try {
-            // const contenido = await fs.readFile(this.PRODUCTOS_FILE, 'utf-8')
-            // return JSON.parse(contenido || '[]')
+            //* const contenido = await fs.readFile(this.PRODUCTOS_FILE, 'utf-8')
+            //* return JSON.parse(contenido || '[]')
 
             //! Armo consulta a MongoDB usando el modelo con paginacion, filtros y ordenamiento
             const {
@@ -48,20 +47,20 @@ class ProductManager {
                 page: parseInt(page),
                 limit: parseInt(limit),
                 sort: orden,
-                lean: true  // Devuelve objetos planos de JavaScript
+                lean: true  //? Devuelve objetos planos de JavaScript
             }
 
             const productos = await ProductModel.paginate(filtro, pagina)
 
-            // Armo links de paginación
+            //! Armo links de paginación
             const baseLink = (PageNum) => {
-                let link = `/api/products?limit=${limit}&page=${PageNum}` // Link base con limit y page
-                if (sort) { link += `&sort=${sort}` } // Agrego sort (orden) si existe
-                if (query) { link += `&query=${encodeURIComponent(typeof query === 'string' ? query : JSON.stringify(query))}` } // Agrego query (filtro) si existe
+                let link = `/api/products?limit=${limit}&page=${PageNum}` //? Link base con limit y page
+                if (sort) { link += `&sort=${sort}` } //? Agrego sort (orden) si existe
+                if (query) { link += `&query=${encodeURIComponent(typeof query === 'string' ? query : JSON.stringify(query))}` } //? Agrego query (filtro) si existe
                 return link
             }
 
-            // Devuelvo estructura completa
+            //! Devuelvo estructura completa
             return {
                 status: "success",
                 payload: productos.docs,
@@ -84,9 +83,8 @@ class ProductManager {
     }
 
     async consultaProductosxId(id) {
-        //? Migro a MongoDB
-        // const productoBuscado = await this.consultaProductos()
-        // return productoBuscado.find(p => p.id === parseInt(id))
+        //* const productoBuscado = await this.consultaProductos()
+        //* return productoBuscado.find(p => p.id === parseInt(id))
         try {
             const producto = await ProductModel.findOne({ _id: id })
             return producto
@@ -100,13 +98,12 @@ class ProductManager {
     }
 
     async agregarProducto(title, description, code, price, status = true, stock, category, thumbnails = []) {
-        //? Migro a MongoDB
-        // const productos = await this.consultaProductos()
-        // const nuevoProducto = { id: productos.length + 1, title, description, code, price, status, stock, category, thumbnails };
-        // productos.push(nuevoProducto)
-        // await fs.writeFile(this.PRODUCTOS_FILE, JSON.stringify(productos))
-        // console.log("El producto se ha agregado!");
-        // return nuevoProducto
+        //* const productos = await this.consultaProductos()
+        //* const nuevoProducto = { id: productos.length + 1, title, description, code, price, status, stock, category, thumbnails };
+        //* productos.push(nuevoProducto)
+        //* await fs.writeFile(this.PRODUCTOS_FILE, JSON.stringify(productos))
+        //* console.log("El producto se ha agregado!");
+        //* return nuevoProducto
         try {
             const nuevoProducto = await ProductModel.collection.insertOne({
                 title,
@@ -143,26 +140,25 @@ class ProductManager {
         }
     }
 
-    // async actualizarProducto(id, title, description, code, price, status, stock, category, thumbnails) {
+    //* async actualizarProducto(id, title, description, code, price, status, stock, category, thumbnails) {
     async actualizarProducto(id, data) {
-        //? Migro a MongoDB
-        // const productos = await this.consultaProductos()
-        //     const producto = productos.find(p => p.id === parseInt(id))
-        //     if (!producto) {
-        //         console.log("Producto no encontrado")
-        //         return
-        //     }
-        //     producto.title = title || producto.title
-        //     producto.description = description || producto.description
-        //     producto.code = code || producto.code
-        //     producto.price = price || producto.price
-        //     producto.status = status || producto.status
-        //     producto.stock = stock || producto.stock
-        //     producto.category = category || producto.category
-        //     producto.thumbnails = thumbnails || producto.thumbnails
-        //     await fs.writeFile(this.PRODUCTOS_FILE, JSON.stringify(productos))
-        //     console.log("El Usuario se ha actualizado");
-        //     return producto
+        //* const productos = await this.consultaProductos()
+        //*     const producto = productos.find(p => p.id === parseInt(id))
+        //*     if (!producto) {
+        //*         console.log("Producto no encontrado")
+        //*         return
+        //*     }
+        //*     producto.title = title || producto.title
+        //*     producto.description = description || producto.description
+        //*     producto.code = code || producto.code
+        //*     producto.price = price || producto.price
+        //*     producto.status = status || producto.status
+        //*     producto.stock = stock || producto.stock
+        //*     producto.category = category || producto.category
+        //*     producto.thumbnails = thumbnails || producto.thumbnails
+        //*     await fs.writeFile(this.PRODUCTOS_FILE, JSON.stringify(productos))
+        //*     console.log("El Usuario se ha actualizado");
+        //*     return producto
         try {
             //! Busco el producto
             let producto = await ProductModel.findOne({ _id: id })
@@ -189,12 +185,11 @@ class ProductManager {
     }
 
     async eliminarProducto(id) {
-        //? Migro a MongoDB
-        // const productos = await this.consultaProductos();
-        // const productoAEliminar = productos.filter(p => p.id !== Number(id));
-        // await fs.writeFile(this.PRODUCTOS_FILE, JSON.stringify(productoAEliminar));
-        // console.log("El Usuario se ha eliminado correctamente!");
-        // return true
+        //* const productos = await this.consultaProductos();
+        //* const productoAEliminar = productos.filter(p => p.id !== Number(id));
+        //* await fs.writeFile(this.PRODUCTOS_FILE, JSON.stringify(productoAEliminar));
+        //* console.log("El Usuario se ha eliminado correctamente!");
+        //* return true
         try {
             //! Busco el producto
             let producto = await ProductModel.findOne({ _id: id })

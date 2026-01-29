@@ -1,48 +1,173 @@
-const express = require('express')
-const CartManager = require('../managers/CartManager')
+import express from 'express'
+import CartManager from '../managers/cart.manager.js'
+
 const router = express.Router()
 const CM = new CartManager()
 
-// Crea un nuevo carrito
+//! POST / - Crear un nuevo carrito vacío
 router.post('/', async (req, res) => {
     try {
         const nuevoCarrito = await CM.crearCarrito()
-        if (!nuevoCarrito) {
-            return res.status(404).json({ mensaje: "Error al crear el carrito" })
+
+        if (nuevoCarrito.status === 'error') {
+            return res.status(500).json(nuevoCarrito)
         }
+
         res.status(201).json({ mensaje: "Carrito creado", carrito: nuevoCarrito })
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        res.status(500).json({
+            status: 'error',
+            error: error.message
+        })
     }
 })
 
-// Lista carrito por ID
+//! GET /:cid - Lista carrito por ID
 router.get('/:cid', async (req, res) => {
     try {
         const { cid } = req.params
         const carrito = await CM.consultaCarritoxId(cid)
+
         if (!carrito) {
-            return res.status(404).json({ mensaje: "Carrito no encontrado" })
+            return res.status(404).json({ error: 'Carrito no encontrado' })
         }
+
+        if (carrito.status === 'error') {
+            return res.status(500).json(carrito)
+        }
+
         res.json(carrito)
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
 })
 
-// Agrega un producto al carrito
+//! POST /:cid/product/:pid - Agrega un producto al carrito
 router.post('/:cid/product/:pid', async (req, res) => {
     try {
         const { cid, pid } = req.params
         const { quantity } = req.body
+
         const resultado = await CM.agregarProductoACarrito(cid, pid, quantity || 1)
+
         if (!resultado) {
-            return res.status(404).json({ mensaje: "Error al agregar el producto al carrito" })
+            return res.status(404).json({ error: 'Carrito o producto no encontrado' })
         }
+
+        if (resultado.status === 'error') {
+            return res.status(500).json(resultado)
+        }
+
         res.status(200).json({ mensaje: "Producto agregado al carrito", carrito: resultado })
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        res.status(500).json({
+            status: 'error',
+            error: error.message
+        })
     }
 })
 
-module.exports = router
+//! DELETE /:cid/products/:pid - Elimina un producto del carrito
+router.delete('/:cid/products/:pid', async (req, res) => {
+    try {
+        const { cid, pid } = req.params
+        const resultado = await CM.eliminarProductoDeCarrito(cid, pid)
+
+        if (!resultado) {
+            return res.status(404).json({ error: 'Carrito o producto no encontrado' })
+        }
+
+        if (resultado.status === 'error') {
+            return res.status(500).json(resultado)
+        }
+
+        res.status(200).json({ mensaje: "Producto eliminado del carrito", carrito: resultado })
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            error: error.message
+        })
+    }
+})
+
+//! PUT /:cid - Actualiza el carrito con un arreglo de productos
+router.put('/:cid', async (req, res) => {
+    try {
+        const { cid } = req.params
+        const { productos } = req.body
+
+        const resultado = await CM.actualizarCarrito(cid, productos)
+
+        if (!resultado) {
+            return res.status(404).json({ error: 'Carrito no encontrado' })
+        }
+
+        if (resultado.status === 'error') {
+            return res.status(500).json(resultado)
+        }
+
+        res.status(200).json({ mensaje: "Carrito actualizado", carrito: resultado })
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            error: error.message
+        })
+    }
+})
+
+//! PUT /:cid/products/:pid - Actualizar cantidad de un producto
+router.put('/:cid/products/:pid', async (req, res) => {
+    try {
+        const { cid, pid } = req.params
+        const { quantity } = req.body
+
+        if (!quantity || quantity <= 0 || typeof quantity !== 'number') {
+            return res.status(400).json({
+                mensaje: "El campo 'quantity' es requerido y debe ser un número mayor a 0"
+            })
+        }
+
+        const resultado = await CM.actualizarCantidadProducto(cid, pid, quantity)
+
+        if (!resultado) {
+            return res.status(404).json({ error: 'Carrito o producto no encontrado' })
+        }
+
+        if (resultado.status === 'error') {
+            return res.status(500).json(resultado)
+        }
+
+        res.status(200).json({ mensaje: "Cantidad actualizada", carrito: resultado })
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            error: error.message
+        })
+    }
+})
+
+//! DELETE /:cid - Vacía el carrito
+router.delete('/:cid', async (req, res) => {
+    try {
+        const { cid } = req.params
+
+        const resultado = await CM.vaciarCarrito(cid)
+
+        if (!resultado) {
+            return res.status(404).json({ error: 'Carrito no encontrado' })
+        }
+
+        if (resultado.status === 'error') {
+            return res.status(500).json(resultado)
+        }
+
+        res.status(200).json({ mensaje: "Carrito vaciado", carrito: resultado })
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            error: error.message
+        })
+    }
+})
+
+export default router
