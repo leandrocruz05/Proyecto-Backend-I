@@ -19,6 +19,10 @@ const __dirname = dirname(__filename) // Obtengo el directorio actual
 
 // Configuracion de Handlebars
 app.engine('handlebars', handlebars.engine({
+    runtimeOptions: { // Configuración para permitir prototipos en Handlebars
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true
+    },
     helpers: {
         // Comparar dos valores
         eq: (a, b) => a === b,
