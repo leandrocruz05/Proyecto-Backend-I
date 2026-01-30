@@ -92,7 +92,7 @@ class ProductManager {
         //* const productoBuscado = await this.consultaProductos()
         //* return productoBuscado.find(p => p.id === parseInt(id))
         try {
-            const producto = await ProductModel.findOne({ _id: id })
+            const producto = await ProductModel.findOne({ _id: id }).lean()
             return producto
         } catch (error) {
             console.error("Error al consultar el producto por ID:", error)
