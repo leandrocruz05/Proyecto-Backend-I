@@ -151,7 +151,7 @@
                         <h5 class="text-success" id="cart-total">${{calculateTotal cart.products}}</h5>
                     </div>
                     <div class="d-grid gap-2">
-                        <button class="btn btn-success btn-lg">
+                        <button class="btn btn-success btn-lg" id="checkout-btn">
                             Finalizar Compra <i class="bi bi-check"></i>
                         </button>
                         <a href="/products" class="btn btn-outline-primary">
@@ -353,6 +353,30 @@
                     method: 'DELETE'
                 }).then(function () {
                     location.reload()
+                })
+            }
+        })
+    }
+
+    // Finalizar compra
+    const checkoutBtn = document.getElementById('checkout-btn')
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function () {
+            if (confirm('¿Deseas finalizar la compra?')) {
+                fetch('/api/carts/' + cartId + '/checkout', {
+                    method: 'POST'
+                })
+                .then(function (response) { return response.json() })
+                .then(function (data) {
+                    if (data.mensaje) {
+                        alert('¡Compra finalizada con éxito! Tu pedido ha sido registrado.')
+                        localStorage.setItem('cartId', data.nuevoCarrito._id)
+                        window.location.href = '/products'
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error:', error)
+                    alert('Error al finalizar la compra')
                 })
             }
         })
