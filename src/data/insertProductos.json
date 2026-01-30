@@ -1,0 +1,178 @@
+[
+    {
+        "title": "Camiseta Titular",
+        "description": "Camiseta oficial titular del equipo, material técnico y cómodo.",
+        "code": "PRD001",
+        "price": 70000,
+        "stock": 10,
+        "category": "Camisetas",
+        "thumbnails": [
+            "/images/camisetatitular.jpeg"
+        ]
+    },
+    {
+        "title": "Camiseta LAtidos",
+        "description": "Camiseta edición especial LAtidos, diseño único y exclusivo.",
+        "code": "PRD002",
+        "price": 60000,
+        "stock": 0,
+        "category": "Camisetas",
+        "thumbnails": [
+            "/images/camisetalatidos.jpeg"
+        ]
+    },
+    {
+        "title": "Camiseta Alternativa II",
+        "description": "Camiseta alternativa II, ideal para coleccionistas y fanáticos.",
+        "code": "PRD003",
+        "price": 55000,
+        "stock": 17,
+        "category": "Camisetas",
+        "thumbnails": [
+            "/images/camisetaalternativa.jpeg"
+        ]
+    },
+    {
+        "title": "Camiseta Pura Sangre",
+        "description": "Camiseta Pura Sangre, representa la pasión y entrega en cada partido.",
+        "code": "PRD004",
+        "price": 54000,
+        "stock": 14,
+        "category": "Camisetas",
+        "thumbnails": [
+            "/images/camisetapurasangre.jpeg"
+        ]
+    },
+    {
+        "title": "Buzo Canguro c/ friza",
+        "description": "Buzo canguro con friza, ideal para días fríos y confortables.",
+        "code": "PRD005",
+        "price": 59000,
+        "stock": 0,
+        "category": "Buzos",
+        "thumbnails": [
+            "/images/buzocangurofriza.jpeg"
+        ]
+    },
+    {
+        "title": "Buzo Condór II Azul",
+        "description": "Buzo Condór II Azul, diseño moderno y cálido para el invierno.",
+        "code": "PRD006",
+        "price": 59000,
+        "stock": 40,
+        "category": "Buzos",
+        "thumbnails": [
+            "/images/buzocondorazul.png"
+        ]
+    },
+    {
+        "title": "Buzo Condór II Rojo",
+        "description": "Buzo Condór II Rojo, ideal para fanáticos que prefieren el color rojo.",
+        "code": "PRD007",
+        "price": 59000,
+        "stock": 13,
+        "category": "Buzos",
+        "thumbnails": [
+            "/images/buzocondorrojo.png"
+        ]
+    },
+    {
+        "title": "Camperon impermeable",
+        "description": "Camperón impermeable, perfecto para lluvia y bajas temperaturas.",
+        "code": "PRD008",
+        "price": 145000,
+        "stock": 5,
+        "category": "Camperas",
+        "thumbnails": [
+            "/images/camperon.png"
+        ]
+    },
+    {
+        "title": "Camiseta Titan Azul",
+        "description": "Camiseta Titan Azul, ideal para entrenamiento y actividades deportivas.",
+        "code": "PRD009",
+        "price": 32000,
+        "stock": 15,
+        "category": "Entrenamiento",
+        "thumbnails": [
+            "/images/azulentrenamiento.jpg"
+        ]
+    },
+    {
+        "title": "Musculosa Dublin Azul",
+        "description": "Musculosa Dublin Azul, fresca y cómoda para el verano.",
+        "code": "PRD010",
+        "price": 32000,
+        "stock": 0,
+        "category": "Entrenamiento",
+        "thumbnails": [
+            "/images/musculosa.jpg"
+        ]
+    },
+    {
+        "title": "Remera Striker Azul",
+        "description": "Remera Striker Azul, diseño deportivo y ligero para entrenamiento.",
+        "code": "PRD011",
+        "price": 34000,
+        "stock": 21,
+        "category": "Entrenamiento",
+        "thumbnails": [
+            "/images/striker.jpg"
+        ]
+    },
+    {
+        "title": "Camiseta Titan Roja",
+        "description": "Camiseta Titan Roja, perfecta para entrenar con estilo y comodidad.",
+        "code": "PRD012",
+        "price": 32000,
+        "stock": 23,
+        "category": "Entrenamiento",
+        "thumbnails": [
+            "/images/rojaentrenamiento.jpg"
+        ]
+    },
+    {
+        "title": "Imán Estadio",
+        "description": "Imán con diseño del estadio, ideal para coleccionistas.",
+        "code": "PRD013",
+        "price": 6000,
+        "stock": 12,
+        "category": "Accesorios",
+        "thumbnails": [
+            "/images/iman.jpg"
+        ]
+    },
+    {
+        "title": "Billetera Escudo",
+        "description": "Billetera con el escudo del club, práctica y resistente.",
+        "code": "PRD014",
+        "price": 12000,
+        "stock": 20,
+        "category": "Accesorios",
+        "thumbnails": [
+            "/images/billetera.jpg"
+        ]
+    },
+    {
+        "title": "Portallave Estadio",
+        "description": "Portallave con motivo del estadio, útil para organizar tus llaves.",
+        "code": "PRD015",
+        "price": 20000,
+        "stock": 0,
+        "category": "Accesorios",
+        "thumbnails": [
+            "/images/portallaves.jpg"
+        ]
+    },
+    {
+        "title": "Llavero cinta",
+        "description": "Llavero cinta, pequeño accesorio para llevar el club a todos lados.",
+        "code": "PRD016",
+        "price": 2000,
+        "stock": 50,
+        "category": "Accesorios",
+        "thumbnails": [
+            "/images/llavero.jpg"
+        ]
+    }
+]

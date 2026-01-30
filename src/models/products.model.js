@@ -21,9 +21,6 @@ const productSchema = new mongoose.Schema({
         required: true,
         index: true  // Índice para buscar rapido por precio
     },
-    status: {
-        type: Boolean
-    },
     stock: {
         type: Number,
         required: true

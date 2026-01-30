@@ -29,6 +29,14 @@ viewsRouter.get('/products', async (req, res) => {
             return res.status(400).json({ error: resultado.message })
         }
 
+        //! Armo links de paginación para la vista
+        const baseLink = (pageNum) => {
+            let link = `/products?limit=${limit || 10}&page=${pageNum}`
+            if (sort) link += `&sort=${sort}`
+            if (query) link += `&query=${encodeURIComponent(query)}`
+            return link
+        }
+
         //! Reenderizo vista con productos y datos de paginación
         res.render('products', {
             title: 'Productos',
@@ -39,8 +47,8 @@ viewsRouter.get('/products', async (req, res) => {
             page: resultado.page,
             hasPrevPage: resultado.hasPrevPage,
             hasNextPage: resultado.hasNextPage,
-            prevLink: resultado.prevLink,
-            nextLink: resultado.nextLink,
+            prevLink: resultado.hasPrevPage ? baseLink(resultado.prevPage) : null,
+            nextLink: resultado.hasNextPage ? baseLink(resultado.nextPage) : null,
             limit: limit || 10,
             sort,
             query

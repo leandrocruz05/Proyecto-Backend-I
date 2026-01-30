@@ -56,11 +56,6 @@ app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
 app.use('/', viewRouter)
 
-// Ruta raíz
-app.get('/', (req, res) => {
-    res.json({ mensaje: "API de Productos y Carritos" })
-})
-
 // Inicia el servidor HTTP
 const httpServer = app.listen(port, () => {
     console.log(`Servidor corriendo en el puerto ${port}`)
@@ -79,7 +74,7 @@ socketServer.on('connection', async (socket) => {
 
     // Enviar productos 
     const productos = await PM.consultaProductos({ limit: 100 })
-    socket.emit('productos', productos.docs)
+    socketServer.emit('productos', productos.payload || [])
 
     // Escuchar agregar producto
     socket.on('agregarProducto', async (producto) => {
@@ -88,20 +83,19 @@ socketServer.on('connection', async (socket) => {
             producto.description,
             producto.code,
             producto.price,
-            producto.status,
             producto.stock,
             producto.category,
             producto.thumbnails
         )
         const productos = await PM.consultaProductos({ limit: 100 })
-        socketServer.emit('productos', productos.docs)
+        socketServer.emit('productos', productos.payload || [])
     })
 
     // Escuchar eliminar producto
     socket.on('eliminarProducto', async (id) => {
         await PM.eliminarProducto(id)
         const productos = await PM.consultaProductos({ limit: 100 })
-        socketServer.emit('productos', productos)
+        socketServer.emit('productos', productos.payload || [])
     })
 })
 
