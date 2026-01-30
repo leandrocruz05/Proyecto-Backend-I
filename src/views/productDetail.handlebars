@@ -7,8 +7,8 @@
         <div class="navbar-nav ms-auto">
             <a class="nav-link" href="/">Inicio</a>
             <a class="nav-link" href="/products">Productos</a>
-            <a class="nav-link position-relative" href="/cart">
-                <i class="bi bi-cart3"></i> Carrito
+            <a class="nav-link position-relative" href="#" id="cart-link">
+                <i class="bi bi-cart3"></i> Mi Carrito
                 <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle"
                     id="cart-badge">0</span>
             </a>
@@ -134,41 +134,95 @@
 
 {{!-- JavaScript --}}
 <script>
-    var productId = '{{product._id}}';
-    var maxStock = {{ product.stock }};
-    var quantityInput = document.getElementById('quantityInput');
-    var decreaseBtn = document.getElementById('decreaseBtn');
-    var increaseBtn = document.getElementById('increaseBtn');
-    var addToCartBtn = document.getElementById('addToCartBtn');
-    var productInCart = false
+    const productId = '{{product._id}}'
+    const maxStock = {{ product.stock }}
+    const quantityInput = document.getElementById('quantityInput')
+    const decreaseBtn = document.getElementById('decreaseBtn')
+    const increaseBtn = document.getElementById('increaseBtn')
+    const addToCartBtn = document.getElementById('addToCartBtn')
+    let productInCart = false
+
+    // Función para crear o recuperar el carrito
+    function ensureCart(callback) {
+        const cartId = localStorage.getItem('cartId')
+
+        if (!cartId) {
+            // Crear nuevo carrito
+            fetch('/api/carts', { method: 'POST' })
+                .then(function (res) { return res.json() })
+                .then(function (data) {
+                    const newCartId = data.carrito._id
+                    localStorage.setItem('cartId', newCartId)
+                    callback(newCartId)
+                })
+        } else {
+            callback(cartId)
+        }
+    }
+
+    // Actualizar el enlace del carrito
+    function updateCartLink() {
+        const cartId = localStorage.getItem('cartId')
+        const cartLink = document.getElementById('cart-link')
+
+        if (cartId) {
+            cartLink.href = '/carts/' + cartId
+        } else {
+            cartLink.href = '#'
+        }
+    }
 
     function updateCartBadge() {
-        var cartId = localStorage.getItem('cartId');
+        const cartId = localStorage.getItem('cartId')
         if (!cartId) {
-            document.getElementById('cart-badge').textContent = '0';
+            document.getElementById('cart-badge').textContent = '0'
             if (addToCartBtn) {
                 addToCartBtn.innerHTML = '<i class="bi bi-cart-plus"></i> Agregar al Carrito'
             }
-            return;
+            updateCartLink()
+            return
         }
 
         fetch('/api/carts/' + cartId)
-            .then(function (response) { return response.json(); })
+            .then(function (response) {
+                if (!response.ok) {
+                    // Si el carrito no existe, crear uno nuevo
+                    localStorage.removeItem('cartId')
+                    ensureCart(function (newCartId) {
+                        updateCartBadge()
+                    })
+                    return null
+                }
+                return response.json()
+            })
             .then(function (cart) {
-                var total = 0;
+                if (!cart) return
+
+                if (cart.error || cart.status === 'error') {
+                    // Si hay error, limpiar localStorage
+                    localStorage.removeItem('cartId')
+                    document.getElementById('cart-badge').textContent = '0'
+                    if (addToCartBtn) {
+                        addToCartBtn.innerHTML = '<i class="bi bi-cart-plus"></i> Agregar al Carrito'
+                    }
+                    updateCartLink()
+                    return
+                }
+
+                let total = 0
                 productInCart = false
 
-                for (var i = 0; i < cart.products.length; i++) {
-                    total = total + cart.products[i].quantity;
+                for (let i = 0; i < cart.products.length; i++) {
+                    total = total + cart.products[i].quantity
 
-                    var cartProductId = cart.products[i].product._id || cart.products[i].product;
+                    const cartProductId = cart.products[i].product._id || cart.products[i].product
                     if (cartProductId === productId && quantityInput) {
-                        quantityInput.value = cart.products[i].quantity;
+                        quantityInput.value = cart.products[i].quantity
                         productInCart = true
                     }
                 }
 
-                document.getElementById('cart-badge').textContent = total;
+                document.getElementById('cart-badge').textContent = total
 
                 if (addToCartBtn) {
                     if (productInCart) {
@@ -177,73 +231,64 @@
                         addToCartBtn.innerHTML = '<i class="bi bi-cart-plus"></i> Agregar al Carrito'
                     }
                 }
-            });
+                updateCartLink()
+            })
+            .catch(function (error) {
+                console.error('Error al actualizar badge:', error)
+                document.getElementById('cart-badge').textContent = '0'
+            })
     }
 
     if (decreaseBtn) {
         decreaseBtn.addEventListener('click', function () {
-            var current = parseInt(quantityInput.value);
+            const current = parseInt(quantityInput.value)
             if (current > 1) {
-                quantityInput.value = current - 1;
+                quantityInput.value = current - 1
             }
-        });
+        })
     }
 
     if (increaseBtn) {
         increaseBtn.addEventListener('click', function () {
-            var current = parseInt(quantityInput.value);
+            const current = parseInt(quantityInput.value)
             if (current < maxStock) {
-                quantityInput.value = current + 1;
+                quantityInput.value = current + 1
             }
-        });
+        })
     }
 
     if (addToCartBtn) {
         addToCartBtn.addEventListener('click', function () {
-            var quantity = parseInt(quantityInput.value);
-            var cartId = localStorage.getItem('cartId');
+            const quantity = parseInt(quantityInput.value)
 
-            if (!cartId) {
-                fetch('/api/carts', { method: 'POST' })
-                    .then(function (res) { return res.json(); })
-                    .then(function (data) {
-                        cartId = data.carrito._id;
-                        localStorage.setItem('cartId', cartId);
-
-                        fetch('/api/carts/' + cartId + '/product/' + productId, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ quantity: quantity })
-                        }).then(function () {
-                            updateCartBadge();
-                            alert('Producto agregado al carrito');
-                        });
-                    });
-            } else {
+            ensureCart(function (cartId) {
                 if (productInCart) {
                     fetch('/api/carts/' + cartId + '/products/' + productId, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ quantity: quantity })
                     }).then(function () {
-                        updateCartBadge();
+                        updateCartBadge()
                         alert('Carrito actualizado')
-                    });
+                    })
                 } else {
                     fetch('/api/carts/' + cartId + '/product/' + productId, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ quantity: quantity })
                     }).then(function () {
-                        updateCartBadge();
+                        updateCartBadge()
                         alert('Producto agregado al carrito')
-                    });
+                    })
                 }
-            }
-        });
+            })
+        })
     }
 
-    updateCartBadge();
+    // Crear carrito al cargar la página si no existe
+    ensureCart(function (cartId) {
+        updateCartBadge()
+    })
 </script>
 
 <style>

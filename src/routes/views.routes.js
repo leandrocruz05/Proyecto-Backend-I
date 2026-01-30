@@ -51,7 +51,8 @@ viewsRouter.get('/products', async (req, res) => {
             nextLink: resultado.hasNextPage ? baseLink(resultado.nextPage) : null,
             limit: limit || 10,
             sort,
-            query
+            query,
+            cartId: ''
         })
     } catch (error) {
         res.status(500).json({ error: error.message })
@@ -92,7 +93,7 @@ viewsRouter.get('/carts/:cid', async (req, res) => {
             return res.status(400).json({ error: carrito.message })
         }
 
-        res.render('cart', { title: `Mi Carrito ${cid}`, cart: carrito })
+        res.render('carts', { title: `Mi Carrito`, cart: carrito, cartId: cid })
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
