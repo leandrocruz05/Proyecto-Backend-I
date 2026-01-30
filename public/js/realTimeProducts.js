@@ -8,13 +8,12 @@ socket.on('productos', (productos) => {
 
     productos.forEach((producto) => {
         const tr = `<tr>
-                        <td>${producto.id}</td>
                         <td>${producto.title}</td>
                         <td>${producto.description}</td>
                         <td class="text-nowrap">$${producto.price}</td>
                         <td><span class="badge bg-info">${producto.stock}</span></td>
                         <td><span class="badge bg-secondary">${producto.category}</span></td>
-                        <td><button class="btn btn-danger btn-sm" onclick="eliminarProducto(${producto.id})">Eliminar</button></td>
+                        <td><button class="btn btn-danger btn-sm" onclick="eliminarProducto('${producto._id}')">Eliminar</button></td>
                     </tr>
                     `
         productoForm.innerHTML += tr
@@ -42,7 +41,6 @@ document.getElementById('formAgregarProducto').addEventListener('submit', (event
         description: formData.get('description'),
         code: formData.get('code'),
         price: parseFloat(formData.get('price')),
-        status: formData.get('status') === 'on',
         stock: parseInt(formData.get('stock')),
         category: formData.get('category'),
         thumbnails: []

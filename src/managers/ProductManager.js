@@ -29,7 +29,13 @@ class ProductManager {
                     try {
                         filtro = JSON.parse(query)
                     } catch (error) {
-                        filtro = { category: query }
+                        // Buscar en category o title con regex case-insensitive
+                        filtro = {
+                            $or: [
+                                { category: { $regex: query, $options: 'i' } },
+                                { title: { $regex: query, $options: 'i' } }
+                            ]
+                        }
                     }
                 } else {
                     filtro = query
