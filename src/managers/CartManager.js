@@ -255,6 +255,29 @@ class CartManager {
             }
         }
     }
+
+    async eliminarCarrito(cid) {
+        try {
+            const carrito = await CartModel.findByIdAndDelete(cid)
+
+            if (!carrito) {
+                console.log("Carrito no encontrado")
+                return {
+                    status: 'error',
+                    error: "Carrito no encontrado"
+                }
+            }
+
+            console.log("Carrito eliminado permanentemente")
+            return { status: 'success', mensaje: 'Carrito eliminado' }
+        } catch (error) {
+            console.error("Error al eliminar el carrito:", error)
+            return {
+                status: 'error',
+                error: error.message
+            }
+        }
+    }
 }
 
 export default CartManager

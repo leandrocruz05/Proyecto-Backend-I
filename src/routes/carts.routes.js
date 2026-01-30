@@ -170,4 +170,58 @@ router.delete('/:cid', async (req, res) => {
     }
 })
 
+//! POST /:cid/checkout - Finalizar compra (guarda el carrito actual y crea uno nuevo)
+router.post('/:cid/checkout', async (req, res) => {
+    try {
+        const { cid } = req.params
+        
+        const carritoActual = await CM.consultaCarritoxId(cid)
+        
+        if (!carritoActual || carritoActual.products.length === 0) {
+            return res.status(400).json({ error: 'No se puede finalizar una compra con el carrito vacío' })
+        }
+
+        const nuevoCarrito = await CM.crearCarrito()
+
+        if (nuevoCarrito.status === 'error') {
+            return res.status(500).json(nuevoCarrito)
+        }
+
+        res.status(200).json({ 
+            mensaje: "Compra finalizada con éxito", 
+            carritoFinalizado: carritoActual,
+            nuevoCarrito: nuevoCarrito
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            error: error.message
+        })
+    }
+})
+
+//! DELETE /:cid/delete-permanent - Elimina permanentemente un carrito
+router.delete('/:cid/delete-permanent', async (req, res) => {
+    try {
+        const { cid } = req.params
+
+        const resultado = await CM.eliminarCarrito(cid)
+
+        if (!resultado) {
+            return res.status(404).json({ error: 'Carrito no encontrado' })
+        }
+
+        if (resultado.status === 'error') {
+            return res.status(500).json(resultado)
+        }
+
+        res.status(200).json({ mensaje: "Carrito eliminado permanentemente", status: 'success' })
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            error: error.message
+        })
+    }
+})
+
 export default router
