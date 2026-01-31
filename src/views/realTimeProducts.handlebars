@@ -1,32 +1,83 @@
-<h1 class="mb-4">Productos en Tiempo Real</h1>
+<h1 class="mb-4">Panel de Administración</h1>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2 class="h5">Agregar Producto</h2>
-        <form id="formAgregarProducto">
-            <div class="mb-2">
-                <input type="text" class="form-control" name="title" placeholder="Título" required>
-            </div>
-            <div class="mb-2">
-                <input type="text" class="form-control" name="description" placeholder="Descripción" required>
-            </div>
-            <div class="mb-2">
-                <input type="text" class="form-control" name="code" placeholder="Código" required>
-            </div>
-            <div class="mb-2">
-                <input type="number" class="form-control" name="price" placeholder="Precio" required>
-            </div>
-            <div class="mb-2">
-                <input type="number" class="form-control" name="stock" placeholder="Stock" required>
-            </div>
-            <div class="mb-2">
-                <input type="text" class="form-control" name="category" placeholder="Categoría" required>
-            </div>
-            <button type="submit" class="btn btn-success w-100">Agregar Producto</button>
-        </form>
-    </div>
+<!-- Tabs Navigation -->
+<ul class="nav nav-tabs mb-3" id="adminTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="productos-tab" data-bs-toggle="tab" data-bs-target="#productos" type="button" role="tab">Productos</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="carritos-tab" data-bs-toggle="tab" data-bs-target="#carritos" type="button" role="tab">Carritos</button>
+    </li>
+</ul>
 
-    <div class="col-md-8">
+<!-- Tabs Content -->
+<div class="tab-content" id="adminTabsContent">
+    <!-- Productos Tab -->
+    <div class="tab-pane fade show active" id="productos" role="tabpanel">
+        <!-- Filtros y ordenamiento -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="searchQuery" placeholder="Buscar producto...">
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="categoryFilter">
+                            <option value="">Todas las categorías</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="sortOrder">
+                            <option value="">Sin ordenar</option>
+                            <option value="asc">Precio: Menor a Mayor</option>
+                            <option value="desc">Precio: Mayor a Menor</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100" onclick="aplicarFiltros()">Filtrar</button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-secondary w-100" onclick="limpiarFiltros()">Limpiar Filtros</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario agregar producto -->
+        <div class="card mb-3">
+            <div class="card-header bg-success text-white">
+                <h2 class="h5 mb-0">Agregar Producto</h2>
+            </div>
+            <div class="card-body">
+                <form id="formAgregarProducto">
+                    <div class="row g-2">
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" name="title" placeholder="Título" required>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" name="description" placeholder="Descripción" required>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" name="code" placeholder="Código" required>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" class="form-control" name="price" placeholder="Precio" required>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" class="form-control" name="stock" placeholder="Stock" required>
+                        </div>
+                        <div class="col-md-1">
+                            <input type="text" class="form-control" name="category" placeholder="Categoría" required>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-success w-100">Agregar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabla de productos -->
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
                 <h1 class="h4 mb-0">Listado de Productos</h1>
@@ -50,7 +101,69 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/realTimeProducts.js"></script>
+    <!-- Carritos Tab -->
+    <div class="tab-pane fade" id="carritos" role="tabpanel">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h2 class="h4 mb-0">Carritos Creados</h2>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-primary mb-3" onclick="cargarCarritos()">Actualizar Carritos</button>
+                <div id="listaCarritos">
+                    <p class="text-muted">Haz clic en "Actualizar Carritos" para ver los carritos existentes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Producto -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarProducto">
+                    <input type="hidden" id="edit_id" name="id">
+                    <div class="mb-3">
+                        <label for="edit_title" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="edit_title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_description" class="form-label">Descripción</label>
+                        <input type="text" class="form-control" id="edit_description" name="description" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_code" class="form-label">Código</label>
+                        <input type="text" class="form-control" id="edit_code" name="code" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_price" class="form-label">Precio</label>
+                        <input type="number" class="form-control" id="edit_price" name="price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_stock" class="form-label">Stock</label>
+                        <input type="number" class="form-control" id="edit_stock" name="stock" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_category" class="form-label">Categoría</label>
+                        <input type="text" class="form-control" id="edit_category" name="category" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarEdicion()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/realTimeProducts.js"></script>

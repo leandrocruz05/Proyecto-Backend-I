@@ -46,8 +46,8 @@ router.get('/:pid', async (req, res) => {
 //! POST / - Crea un nuevo producto
 router.post('/', async (req, res) => {
     try {
-        const { title, description, code, price, status, stock, category, thumbnails } = req.body
-        const nuevoProducto = await PM.agregarProducto(title, description, code, price, status, stock, category, thumbnails)
+        const { title, description, code, price, stock, category, thumbnails } = req.body
+        const nuevoProducto = await PM.agregarProducto(title, description, code, price, stock, category, thumbnails)
 
         const socketServer = req.app.get('socketServer') //? Obtener io desde app
         const productos = await PM.consultaProductos({ limit: 100 }); //? Obtener todos para socket
