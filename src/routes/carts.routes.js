@@ -4,6 +4,24 @@ import CartManager from '../managers/CartManager.js'
 const router = express.Router()
 const CM = new CartManager()
 
+//! GET / - Lista todos los carritos
+router.get('/', async (req, res) => {
+    try {
+        const carritos = await CM.consultaCarrito()
+
+        if (carritos.status === 'error') {
+            return res.status(500).json(carritos)
+        }
+
+        res.json(carritos)
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            error: error.message
+        })
+    }
+})
+
 //! POST / - Crear un nuevo carrito vacío
 router.post('/', async (req, res) => {
     try {

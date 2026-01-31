@@ -103,7 +103,7 @@ class ProductManager {
         }
     }
 
-    async agregarProducto(title, description, code, price, status = true, stock, category, thumbnails = []) {
+    async agregarProducto(title, description, code, price, stock, category, thumbnails = []) {
         //* const productos = await this.consultaProductos()
         //* const nuevoProducto = { id: productos.length + 1, title, description, code, price, status, stock, category, thumbnails };
         //* productos.push(nuevoProducto)
@@ -116,7 +116,6 @@ class ProductManager {
                 description,
                 code,
                 price,
-                status,
                 stock,
                 category,
                 thumbnails
